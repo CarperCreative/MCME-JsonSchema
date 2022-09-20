@@ -8,30 +8,29 @@
 			"oneOf": [
 				{
 					"allOf": [
-						{ "$ref": "#/$defs/withMatchAll" },
-						{ "$ref": "#/$defs/withSelectorVirtualEntity" }
+						{ "$ref": "#/$defs/withMatchAll" }
 					],
 					"properties": {
 						"type": {
 							"const": "talk"
-						}
+						},
+						"select": { "$ref": "#/$defs/selectorVirtualEntity" }
 					}
 				},
 				{
 					"allOf": [
-						{ "$ref": "#/$defs/withMatchAll" },
-						{ "$ref": "#/$defs/withSelectorVirtualEntity" }
+						{ "$ref": "#/$defs/withMatchAll" }
 					],
 					"properties": {
 						"type": {
 							"const": "no_talk"
-						}
+						},
+						"select": { "$ref": "#/$defs/selectorVirtualEntity" }
 					}
 				},
 				{
 					"allOf": [
-						{ "$ref": "#/$defs/withMatchAll" },
-						{ "$ref": "#/$defs/withSelectorMCMEEntity" }
+						{ "$ref": "#/$defs/withMatchAll" }
 					],
 					"required": [
 						"goal_type"
@@ -40,6 +39,7 @@
 						"type": {
 							"const": "goal_type"
 						},
+						"select": { "$ref": "#/$defs/selectorMCMEEntity" },
 						"goal_type": {
 							"type": "string",
 							"enum": [
@@ -69,7 +69,6 @@
 				},
 				{
 					"allOf": [
-						{ "$ref": "#/$defs/withSelectorMCMEEntity" },
 						{ "$ref": "#/$defs/withCriterion" }
 					],
 					"required": [
@@ -79,12 +78,12 @@
 						"type": {
 							"const": "location_proximity"
 						},
+						"select": { "$ref": "#/$defs/selectorMCMEEntity" },
 						"center": { "$ref": "#/$defs/location" }
 					}
 				},
 				{
 					"allOf": [
-						{ "$ref": "#/$defs/withSelectorMCMEEntity" },
 						{ "$ref": "#/$defs/withCriterion" }
 					],
 					"required": [
@@ -94,6 +93,7 @@
 						"type": {
 							"const": "entity_proximity"
 						},
+						"select": { "$ref": "#/$defs/selectorMCMEEntity" },
 						"center": {
 							"type": "string",
 							"title": "Entity name"
@@ -102,7 +102,6 @@
 				},
 				{
 					"allOf": [
-						{ "$ref": "#/$defs/withSelectorMCMEEntity" },
 						{ "$ref": "#/$defs/withCriterion" }
 					],
 					"required": [
@@ -112,6 +111,7 @@
 						"type": {
 							"const": "player_proximity"
 						},
+						"select": { "$ref": "#/$defs/selectorMCMEEntity" },
 						"center": {
 							"type": "string",
 							"title": "Player name"
@@ -119,13 +119,11 @@
 					}
 				},
 				{
-					"allOf": [
-						{ "$ref": "#/$defs/withSelectorVirtualEntity" }
-					],
 					"properties": {
 						"type": {
 							"const": "animation"
 						},
+						"select": { "$ref": "#/$defs/selectorVirtualEntity" },
 						"current_animation": {
 							"type": "string"
 						},
@@ -177,13 +175,13 @@
 				},
 				{
 					"allOf": [
-						{ "$ref": "#/$defs/withSelectorPlayer" },
 						{ "$ref": "#/$defs/withCriterion" }
 					],
 					"properties": {
 						"type": {
 							"const": "player_online"
-						}
+						},
+						"select": { "$ref": "#/$defs/selectorPlayer" }
 					}
 				}
 			],
@@ -221,29 +219,17 @@
 			"type": "string",
 			"pattern": "^@[aevsrp](\\[[^\\]]+\\])?$"
 		},
-		"withSelectorPlayer": {
-			"properties": {
-				"select": {
-					"$ref": "#/$defs/selector",
-					"description": "Player selector. Defaults to `@s`."
-				}
-			}
+		"selectorPlayer": {
+			"$ref": "#/$defs/selector",
+			"description": "Player selector. Defaults to `@s`."
 		},
-		"withSelectorVirtualEntity": {
-			"properties": {
-				"select": {
-					"$ref": "#/$defs/selector",
-					"description": "Virtual entity selector. Defaults to `@s`."
-				}
-			}
+		"selectorVirtualEntity": {
+			"$ref": "#/$defs/selector",
+			"description": "Virtual entity selector. Defaults to `@s`."
 		},
-		"withSelectorMCMEEntity": {
-			"properties": {
-				"select": {
-					"$ref": "#/$defs/selector",
-					"description": "MCME Entity selector. Defaults to `@s`."
-				}
-			}
+		"selectorMCMEEntity": {
+			"$ref": "#/$defs/selector",
+			"description": "MCME Entity selector. Defaults to `@s`."
 		},
 		"criterion": {
 			"type": "string",
