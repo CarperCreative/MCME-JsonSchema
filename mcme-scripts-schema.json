@@ -1,0 +1,281 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://mcmiddleearth.com/schema/scripts",
+	"title": "MCME Script",
+	"type": "object",
+	"$defs": {
+		"condition": {
+			"oneOf": [
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withMatchAll" },
+						{ "$ref": "#/$defs/withSelectorVirtualEntity" }
+					],
+					"properties": {
+						"type": {
+							"const": "talk"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withMatchAll" },
+						{ "$ref": "#/$defs/withSelectorVirtualEntity" }
+					],
+					"properties": {
+						"type": {
+							"const": "no_talk"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withMatchAll" },
+						{ "$ref": "#/$defs/withSelectorMCMEEntity" }
+					],
+					"required": [
+						"goal_type"
+					],
+					"properties": {
+						"type": {
+							"const": "goal_type"
+						},
+						"goal_type": {
+							"type": "string",
+							"enum": [
+								"HOLD_POSITION",
+								"ATTACK_ENTITY",
+								"ATTACK_ENTITY_SPRINT",
+								"ATTACK_ENTITY_WINGED",
+								"DEFEND_ENTITY",
+								"WATCH_ENTITY",
+								"RANGED_ATTACK_ENTITY",
+								"FOLLOW_ENTITY",
+								"FOLLOW_ENTITY_STALKING",
+								"ATTACK_CLOSE",
+								"FOLLOW_CHECKPOINTS",
+								"RANDOM_CHECKPOINTS",
+								"GOTO_LOCATION",
+								"MIMIC",
+								"JOCKEY",
+								"RIDING_PLAYER",
+								"NONE"
+							]
+						},
+						"negate": {
+							"type": "boolean"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withSelectorMCMEEntity" },
+						{ "$ref": "#/$defs/withCriterion" }
+					],
+					"required": [
+						"center"
+					],
+					"properties": {
+						"type": {
+							"const": "location_proximity"
+						},
+						"center": { "$ref": "#/$defs/location" }
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withSelectorMCMEEntity" },
+						{ "$ref": "#/$defs/withCriterion" }
+					],
+					"required": [
+						"center"
+					],
+					"properties": {
+						"type": {
+							"const": "entity_proximity"
+						},
+						"center": {
+							"type": "string",
+							"title": "Entity name"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withSelectorMCMEEntity" },
+						{ "$ref": "#/$defs/withCriterion" }
+					],
+					"required": [
+						"center"
+					],
+					"properties": {
+						"type": {
+							"const": "player_proximity"
+						},
+						"center": {
+							"type": "string",
+							"title": "Player name"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withSelectorVirtualEntity" }
+					],
+					"properties": {
+						"type": {
+							"const": "animation"
+						},
+						"current_animation": {
+							"type": "string"
+						},
+						"manual_animation": {
+							"type": "boolean"
+						},
+						"manual_animation_override": {
+							"type": "boolean"
+						},
+						"instant_animation_switching": {
+							"type": "boolean"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"anyOf": [
+								{
+									"required": [
+										"start"
+									]
+								},
+								{
+									"required": [
+										"end"
+									]
+								}
+							]
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "server_daytime"
+						},
+						"negate": {
+							"type": "boolean"
+						},
+						"world": {
+							"type": "string"
+						},
+						"start": {
+							"type": "integer"
+						},
+						"end": {
+							"type": "integer"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withSelectorPlayer" },
+						{ "$ref": "#/$defs/withCriterion" }
+					],
+					"properties": {
+						"type": {
+							"const": "player_online"
+						}
+					}
+				}
+			],
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": { "$ref": "#/$defs/conditionType" }
+			}
+		},
+		"conditionType": {
+			"type": "string",
+			"enum": [
+				"talk",
+				"no_talk",
+				"goal_type",
+				"location_proximity",
+				"player_proximity",
+				"entity_proximity",
+				"animation",
+				"player_online",
+				"server_daytime"
+			]
+		},
+		"withMatchAll": {
+			"properties": {
+				"match_all": {
+					"type": "boolean",
+					"title": "Match all entities",
+					"description": "If true, all selected entities must match the conditions. If false, at least one entity must match the conditions."
+				}
+			}
+		},
+		"selector": {
+			"type": "string",
+			"pattern": "^@[aevsrp](\\[[^\\]]+\\])?$"
+		},
+		"withSelectorPlayer": {
+			"properties": {
+				"select": {
+					"$ref": "#/$defs/selector",
+					"description": "Player selector. Defaults to `@s`."
+				}
+			}
+		},
+		"withSelectorVirtualEntity": {
+			"properties": {
+				"select": {
+					"$ref": "#/$defs/selector",
+					"description": "Virtual entity selector. Defaults to `@s`."
+				}
+			}
+		},
+		"withSelectorMCMEEntity": {
+			"properties": {
+				"select": {
+					"$ref": "#/$defs/selector",
+					"description": "MCME Entity selector. Defaults to `@s`."
+				}
+			}
+		},
+		"criterion": {
+			"type": "string",
+			"pattern": "^(<|>|>=|<=|==?|<>|!=)\\d+$"
+		},
+		"withCriterion": {
+			"properties": {
+				"criterion": {
+					"$ref": "#/$defs/criterion",
+					"description": "Defaults to always true."
+				}
+			}
+		},
+		"location": {
+			"type": "string",
+			"pattern": "^[^,]+(,[^,]+){3}$",
+			"description": "Location format: `world_name,x,y,z`\nCoordinates are doubles."
+		}
+	},
+	"properties": {
+		"name": {
+			"type": "string",
+			"title": "Script name"
+		},
+		"condition": {
+			"$ref": "#/$defs/condition"
+		},
+		"conditions": {
+			"type": "array",
+			"items": [
+				{ "$ref": "#/$defs/condition" }
+			]
+		}
+	}
+}
