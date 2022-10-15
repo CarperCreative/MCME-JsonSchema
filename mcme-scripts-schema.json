@@ -5,6 +5,7 @@
 	"type": "object",
 	"$defs": {
 		"condition": {
+			"type": "object",
 			"oneOf": [
 				{
 					"allOf": [
@@ -247,6 +248,1813 @@
 			"type": "string",
 			"pattern": "^[^,]+(,[^,]+){3}$",
 			"description": "Location format: `world_name,x,y,z`\nCoordinates are doubles."
+		},
+		"action": {
+			"type": "object",
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": {
+					"$ref": "#/$defs/actionType"
+				},
+				"delay": {
+					"type": "integer",
+					"description": "Delay in ticks before this action is executed.",
+					"minimum": 0
+				}
+			},
+			"oneOf": [
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withTriggerRequired" }
+					],
+					"properties": {
+						"type": {
+							"const": "register_event"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "unregister_event"
+						},
+						"name": {
+							"oneOf": [
+								{
+									"type": "string"
+								},
+								{
+									"type": "array",
+									"items": {
+										"type": "string"
+									},
+									"minItems": 1
+								}
+							]
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withGoal" }
+					],
+					"required": [
+						"goal"
+					],
+					"properties": {
+						"type": {
+							"const": "set_goal"
+						},
+						"select": { "$ref": "#/$defs/selectorVirtualEntity" },
+						"goal_target": { "$ref": "#/$defs/selectorMCMEEntity" }
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "set_enemies"
+						},
+						"select": { "$ref": "#/$defs/selectorVirtualEntity" },
+						"enemies": { "$ref": "#/$defs/selectorMCMEEntity" }
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withVirtualEntitySpawnData" }
+					],
+					"properties": {
+						"type": {
+							"const": "spawn"
+						},
+						"lifespan": {
+							"type": "integer",
+							"minimum": -1
+						},
+						"server_side": {
+							"type": "boolean"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withGoal" },
+						{ "$ref": "#/$defs/withVirtualEntitySpawnData" }
+					],
+					"properties": {
+						"type": {
+							"const": "spawn_relative"
+						},
+						"lifespan": {
+							"type": "integer",
+							"minimum": -1
+						},
+						"location": {
+							"$ref": "#/$defs/location"
+						},
+						"checkpoints": {
+							"type": "array",
+							"items": {
+								"$ref": "#/$defs/location"
+							},
+							"minItems": 1
+						},
+						"on_ground": {
+							"type": "boolean"
+						},
+						"goal_target": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"quantity": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"server_side": {
+							"type": "boolean"
+						},
+						"spread": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"x_edge": {
+							"type": "integer",
+							"minimum": 1
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "despawn"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorVirtualEntity"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "stop_talk"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorVirtualEntity"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withSpeechBalloonLayout" }
+					],
+					"properties": {
+						"type": {
+							"const": "talk"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorVirtualEntity"
+						}
+					}
+				},
+				{
+					"required": [
+						"target"
+					],
+					"properties": {
+						"type": {
+							"const": "teleport"
+						},
+						"target": {
+							"$ref": "#/$defs/location"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"spread": {
+							"type": "integer",
+							"minimum": 0
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"oneOf": [
+								{
+									"required": [
+										"potion_effect"
+									]
+								},
+								{
+									"required": [
+										"choices"
+									]
+								}
+							]
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "add_potion_effect"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"potion_effect": {
+							"$ref": "#/$defs/potionEffect"
+						},
+						"choices": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": [
+									"potion_effect"
+								],
+								"properties": {
+									"weight": {
+										"type": "integer"
+									},
+									"potion_effect": {
+										"$ref": "#/$defs/potionEffect"
+									}
+								}
+							},
+							"minItems": 1
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "remove_potion_effect"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"potion_effect": {
+							"$ref": "#/$defs/potionEffect"
+						}
+					}
+				},
+				{
+					"required": [
+						"time"
+					],
+					"properties": {
+						"type": {
+							"const": "set_server_time"
+						},
+						"time": {
+							"type": "integer"
+						}
+					}
+				},
+				{
+					"required": [
+						"state"
+					],
+					"properties": {
+						"type": {
+							"const": "entity_state"
+						},
+						"state": {
+							"type": "string"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorVirtualEntity"
+						}
+					}
+				},
+				{
+					"required": [
+						"animation"
+					],
+					"properties": {
+						"type": {
+							"const": "animation"
+						},
+						"animation": {
+							"type": "string"
+						},
+						"override": {
+							"type": "boolean"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorVirtualEntity"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withItemsOrItemChoicesRequired" }
+					],
+					"properties": {
+						"type": {
+							"const": "give_item"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"slot": {
+							"$ref": "#/$defs/equipmentSlotName"
+						},
+						"slot_id": {
+							"type": "integer"
+						},
+						"duration": {
+							"type": "integer",
+							"minimum": -1
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withEnchantmentsOrEnchantmentChoicesRequired" },
+						{ "$ref": "#/$defs/withItemFilters" }
+					],
+					"properties": {
+						"type": {
+							"const": "add_enchantment"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"quantity": {
+							"description": "Maximum amount of items to enchant.",
+							"type": "integer",
+							"minimum": -1
+						},
+						"duration": {
+							"description": "Seconds to apply the enchantment for. Forever if `-1`.",
+							"type": "integer",
+							"minimum": -1
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withEnchantmentsOrEnchantmentChoicesRequired" },
+						{ "$ref": "#/$defs/withItemFilters" }
+					],
+					"properties": {
+						"type": {
+							"const": "remove_enchantment"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"quantity": {
+							"description": "Maximum amount of items to remove enchantments from.",
+							"type": "integer",
+							"minimum": -1
+						}
+					}
+				},
+				{
+					"allOf": [
+						{ "$ref": "#/$defs/withItemsRequired" }
+					],
+					"properties": {
+						"type": {
+							"const": "remove_item"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "eye_effect"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"duration": {
+							"description": "Freezes the player and gives them portal nausea effect for the specified duration in ticks.",
+							"type": "integer",
+							"minimum": 1
+						}
+					}
+				},
+				{
+					"required": [
+						"command"
+					],
+					"properties": {
+						"type": {
+							"const": "execute_command"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"command": {
+							"description": "Command to run. Must be allowed by the plugin configuration.",
+							"type": "string"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "firework"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"location": {
+							"$ref": "#/$defs/location"
+						},
+						"power": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"effects": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": [
+									"type"
+								],
+								"properties": {
+									"type": {
+										"type": "string",
+										"enum": [
+											"BALL",
+											"BALL_LARGE",
+											"STAR",
+											"BURST",
+											"CREEPER"
+										]
+									},
+									"trail": {
+										"type": "boolean"
+									},
+									"flicker": {
+										"type": "boolean"
+									},
+									"colors": {
+										"$ref": "#/$defs/fireworkColors"
+									},
+									"fade_colors": {
+										"$ref": "#/$defs/fireworkColors"
+									}
+								}
+							}
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "explosion"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"location": {
+							"$ref": "#/$defs/location"
+						},
+						"radius": {
+							"type": "number",
+							"minimum": 0
+						},
+						"damage": {
+							"type": "number",
+							"minimum": 0
+						},
+						"velocity": {
+							"type": "number",
+							"minimum": 0
+						},
+						"knockback": {
+							"type": "number",
+							"minimum": 0
+						},
+						"particle": {
+							"type": "number",
+							"minimum": 0
+						},
+						"unaffected": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"damager": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"$ref": "#/$defs/withGoal"
+						},
+						{
+							"oneOf": [
+								{
+									"required": [
+										"center"
+									],
+									"not": {
+										"required": [
+											"select"
+										]
+									}
+								}
+							]
+						}
+					],
+					"required": [
+						"choices"
+					],
+					"properties": {
+						"type": {
+							"description": "`select` is ignored if `center` is provided.",
+							"const": "random_spawn"
+						},
+						"choices": {
+							"type": "array",
+							"items": {
+								"allOf": [
+									{
+										"$ref": "#/$defs/withVirtualEntitySpawnData"
+									}
+								],
+								"type": "object",
+								"properties": {
+									"weight": {
+										"type": "integer"
+									}
+								}
+							},
+							"minItems": 1
+						},
+						"probability": {
+							"type": "number"
+						},
+						"group": {
+							"type": "boolean"
+						},
+						"radius": {
+							"$ref": "#/$defs/integerRange"
+						},
+						"quantity": {
+							"$ref": "#/$defs/integerRange"
+						},
+						"server_side": {
+							"type": "boolean"
+						},
+						"goal_target": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"lifespan": {
+							"description": "Time in ticks before the entities are removed. Forever if `-1`.",
+							"type": "integer",
+							"minimum": -1
+						},
+						"center": {
+							"$ref": "#/$defs/location"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						}
+					}
+				},
+				{
+					"required": [
+						"sound_file"
+					],
+					"properties": {
+						"type": {
+							"const": "start_sound"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"sound_file": {
+							"description": "Name of file to play.",
+							"type": "string"
+						},
+						"sound_id": {
+							"description": "Identifier to use for this sound instance.",
+							"type": "string"
+						}
+					}
+				},
+				{
+					"required": [
+						"sound_id"
+					],
+					"properties": {
+						"type": {
+							"const": "stop_sound"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"sound_id": {
+							"description": "Identifier to use for this sound instance.",
+							"type": "string"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"$ref": "#/$defs/withItemsOrItemChoicesRequired"
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "give_chest"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"duration": {
+							"description": "Duration in ticks after which the chest will be removed.",
+							"type": "integer",
+							"minimum": 1
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"$ref": "#/$defs/withItemsRequired"
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "rain_item"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorMCMEEntity"
+						},
+						"duration": {
+							"description": "Duration in tenths of a second for which to rain the chosen item. After this period runs out, the items will be removed over another duration of equal length.",
+							"type": "integer",
+							"minimum": 1
+						},
+						"probability": {
+							"type": "number"
+						},
+						"radius": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"drop_height": {
+							"type": "integer"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"oneOf": [
+								{
+									"required": "title",
+									"properties": {
+										"title": {
+											"minLength": 1
+										}
+									}
+								},
+								{
+									"required": "subtitle",
+									"properties": {
+										"subtitle": {
+											"minLength": 1
+										}
+									}
+								}
+							]
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "title"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"title": {
+							"type": "string"
+						},
+						"subtitle": {
+							"type": "string"
+						},
+						"fade_in": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"stay": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"fade_out": {
+							"type": "integer",
+							"minimum": 0
+						}
+					}
+				},
+				{
+					"required": [
+						"title"
+					],
+					"properties": {
+						"type": {
+							"const": "action_bar"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						"title": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"$ref": "#/$defs/withBossBarName"
+						},
+						{
+							"$ref": "#/$defs/withBossBarData"
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "boss_bar_add"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"$ref": "#/$defs/withBossBarName"
+						},
+						{
+							"$ref": "#/$defs/withBossBarData"
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "boss_bar_edit"
+						}
+					}
+				},
+				{
+					"allOf": [
+						{
+							"$ref": "#/$defs/withBossBarName"
+						}
+					],
+					"properties": {
+						"type": {
+							"const": "boss_bar_remove"
+						},
+						"select": {
+							"$ref": "#/$defs/selectorPlayer"
+						}
+					}
+				},
+				{
+					"required": [
+						"name"
+					],
+					"properties": {
+						"type": {
+							"const": "enable_stage"
+						},
+						"name": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				},
+				{
+					"required": [
+						"name"
+					],
+					"properties": {
+						"type": {
+							"const": "disable_stage"
+						},
+						"name": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				},
+				{
+					"required": [
+						"name"
+					],
+					"properties": {
+						"type": {
+							"const": "set_tag"
+						},
+						"name": {
+							"type": "string",
+							"minLength": 1
+						},
+						"value": {
+							"oneOf": [
+								{
+									"type": "string"
+								},
+								{
+									"type": "null"
+								}
+							]
+						}
+					}
+				},
+				{
+					"required": [
+						"name"
+					],
+					"properties": {
+						"type": {
+							"const": "delete_tag"
+						},
+						"name": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				}
+			]
+		},
+		"actionType": {
+			"type": "string",
+			"enum": [
+				"register_event",
+				"unregister_event",
+				"set_goal",
+				"set_enemies",
+				"spawn",
+				"spawn_relative",
+				"despawn",
+				"stop_talk",
+				"talk",
+				"teleport",
+				"add_potion_effect",
+				"remove_potion_effect",
+				"set_server_time",
+				"entity_state",
+				"animation",
+				"give_item",
+				"remove_item",
+				"eye_effect",
+				"execute_command",
+				"firework",
+				"explosion",
+				"random_spawn",
+				"start_sound",
+				"stop_sound",
+				"give_chest",
+				"rain_item",
+				"title",
+				"action_bar",
+				"add_enchantment",
+				"remove_enchantment",
+				"boss_bar_add",
+				"boss_bar_remove",
+				"boss_bar_edit",
+				"enable_stage",
+				"disable_stage",
+				"set_tag",
+				"delete_tag"
+			]
+		},
+		"withGoal": {
+			"required": [
+				"goal"
+			],
+			"properties": {
+				"goal": {
+					"oneOf": [
+						{
+							"type": "string",
+							"description": "Name of file without extension in entities directory to load goals from."
+						},
+						{
+							"type": "object",
+							"comment": "TODO"
+						}
+					]
+				}
+			}
+		},
+		"withVirtualEntitySpawnData": {
+			"required": [
+				"spawn_data"
+			],
+			"properties": {
+				"spawn_data": {
+					"type": "object",
+					"comment": "TODO"
+				}
+			}
+		},
+		"withSpeechBalloonLayout": {
+			"properties": {
+				"layout": {
+					"type": "object",
+					"properties": {
+						"balloon_visible": {
+							"type": "boolean"
+						},
+						"balloon_material": {
+							"$ref": "#/$defs/materialName"
+						},
+						"line_prefix": {
+							"type": "string"
+						},
+						"line_pitch": {
+							"type": "integer"
+						},
+						"width": {
+							"type": "string",
+							"enum": [
+								"NARROW",
+								"WIDE",
+								"OPTIMAL"
+							]
+						},
+						"line_length_narrow": {
+							"type": "integer"
+						},
+						"line_length_wide": {
+							"type": "integer"
+						},
+						"width_in_blocks_narrow": {
+							"type": "number"
+						},
+						"width_in_blocks_wide": {
+							"type": "number"
+						},
+						"position": {
+							"type": "string",
+							"enum": [
+								"LEFT",
+								"RIGHT",
+								"TOP"
+							]
+						},
+						"base_offset": {
+							"$ref": "#/$defs/vector"
+						},
+						"model_data_narrow": {
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
+						},
+						"model_data_wide": {
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
+						}
+					}
+				},
+				"message": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "integer"
+				}
+			}
+		},
+		"vector": {
+			"type": "object",
+			"required": [
+				"x",
+				"y",
+				"z"
+			],
+			"properties": {
+				"x": {
+					"type": "number"
+				},
+				"y": {
+					"type": "number"
+				},
+				"z": {
+					"type": "number"
+				}
+			}
+		},
+		"integerRange": {
+			"type": "string",
+			"pattern": "^\\d+(?:\\.\\.\\d+)?$"
+		},
+		"potionEffect": {
+			"type": "object",
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"duration": {
+					"type": "integer"
+				},
+				"particles": {
+					"type": "boolean"
+				},
+				"ambient": {
+					"type": "boolean"
+				},
+				"amplifier": {
+					"type": "integer"
+				},
+				"icon": {
+					"type": "boolean"
+				}
+			}
+		},
+		"item": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/withEnchantments"
+				}
+			],
+			"type": "object",
+			"required": [
+				"material"
+			],
+			"properties": {
+				"material": {
+					"$ref": "#/$defs/materialName"
+				},
+				"quantity": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"damage": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"name": {
+					"type": "string"
+				},
+				"attribute_modifier": {
+					"$ref": "#/$defs/attributeModifier"
+				},
+				"attribute_modifiers": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/attributeModifier"
+					},
+					"minItems": 1
+				},
+				"lore": {
+					"oneOf": [
+						{
+							"type": "string"
+						},
+						{
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					]
+				},
+				"custom_model_data": {
+					"type": "integer"
+				}
+			}
+		},
+		"items": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/item"
+				},
+				{
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/item"
+					}
+				},
+				{
+					"$ref": "#/$defs/materialName"
+				}
+			]
+		},
+		"withItems": {
+			"comment": "ActionCompiler/give_item, ActionCompiler/remove_item, ActionCompiler/give_chest, ActionCompiler/rain_item, LootTableCompiler.compileItemChoices",
+			"properties": {
+				"item": {
+					"$ref": "#/$defs/items"
+				},
+				"items": {
+					"$ref": "#/$defs/items"
+				}
+			}
+		},
+		"withItemsRequired": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/withItems"
+				},
+				{
+					"oneOf": [
+						{
+							"required": [
+								"item"
+							]
+						},
+						{
+							"required": [
+								"items"
+							],
+							"properties": {
+								"items": {
+									"minItems": 1
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		"withItemChoices": {
+			"properties": {
+				"choices": {
+					"type": "array",
+					"items": {
+						"allOf": [
+							{
+								"$ref": "#/$defs/withItemsRequired"
+							}
+						],
+						"type": "object",
+						"properties": {
+							"weight": {
+								"type": "integer"
+							}
+						}
+					},
+					"minItems": 1
+				}
+			}
+		},
+		"withItemChoicesRequired": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/withItemChoices"
+				},
+				{
+					"required": [
+						"choices"
+					]
+				}
+			]
+		},
+		"withItemsOrItemChoices": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/withItems"
+				},
+				{
+					"$ref": "#/$defs/withItemChoices"
+				}
+			]
+		},
+		"withItemsOrItemChoicesRequired": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/withItemsRequired"
+				},
+				{
+					"$ref": "#/$defs/withItemChoicesRequired"
+				}
+			]
+		},
+		"itemFilter": {
+			"properties": {
+				"material": {
+					"type": "object",
+					"description": "Material to check for.",
+					"properties": {
+						"value": {
+							"$ref": "#/$defs/materialName"
+						},
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"quantity": {
+					"type": "object",
+					"description": "Exact quantity to check for.",
+					"properties": {
+						"value": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 64
+						},
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"damage": {
+					"type": "object",
+					"description": "Exact damage value to check for.",
+					"properties": {
+						"value": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"name": {
+					"type": "object",
+					"description": "Item name to check for.",
+					"properties": {
+						"value": {
+							"type": "string"
+						},
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"lore": {
+					"type": "object",
+					"description": "NOT_PRESENT is not implemented.",
+					"properties": {
+						"value": {
+							"type": "array",
+							"items": [
+								{
+									"type": "string"
+								}
+							],
+							"minItems": 1
+						},
+						"present": {
+							"const": "PRESENT"
+						}
+					}
+				},
+				"enchantment": {
+					"type": "object",
+					"description": "Not implemented.",
+					"properties": {
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"attribute_modifier": {
+					"type": "object",
+					"description": "Not implemented.",
+					"properties": {
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"attribute_modifiers": {
+					"type": "object",
+					"description": "Not implemented.",
+					"properties": {
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"custom_model_data": {
+					"type": "object",
+					"properties": {
+						"value": {
+							"type": "integer"
+						},
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				},
+				"equipment_slot": {
+					"type": "object",
+					"properties": {
+						"value": {
+							"$ref": "#/$defs/equipmentSlotName"
+						},
+						"present": {
+							"$ref": "#/$defs/itemFilterPropertyState"
+						}
+					}
+				}
+			}
+		},
+		"itemFilterPropertyState": {
+			"type": "string",
+			"enum": [
+				"PRESENT",
+				"NOT_PRESENT"
+			]
+		},
+		"withItemFilters": {
+			"properties": {
+				"item_filter": {
+					"$ref": "#/$defs/itemFilter"
+				},
+				"item_filters": {
+					"$ref": "#/$defs/itemFilter"
+				}
+			}
+		},
+		"withItemFiltersRequired": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/withItemFilters"
+				},
+				{
+					"oneOf": [
+						{
+							"required": [
+								"item_filter"
+							]
+						},
+						{
+							"required": [
+								"item_filters"
+							],
+							"properties": {
+								"item_filters": {
+									"minItems": 1
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		"enchantment": {
+			"required": [
+				"type"
+			],
+			"properties": {
+				"level": {
+					"type": "integer"
+				},
+				"type": {
+					"$ref": "#/$defs/enchantmentName"
+				}
+			}
+		},
+		"enchantmentName": {
+			"type": "string",
+			"description": "Namespaced enchantment name."
+		},
+		"withEnchantments": {
+			"properties": {
+				"enchantment": {
+					"$ref": "#/$defs/enchantment"
+				},
+				"enchantments": {
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/enchantment"
+					},
+					"minItems": 1
+				}
+			}
+		},
+		"withEnchantmentsRequired": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/withEnchantments"
+				},
+				{
+					"oneOf": [
+						{
+							"required": [
+								"enchantment"
+							]
+						},
+						{
+							"required": [
+								"enchantments"
+							],
+							"properties": {
+								"enchantments": {
+									"minItems": 1
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		"withEnchantmentChoices": {
+			"properties": {
+				"choices": {
+					"type": "array",
+					"items": {
+						"allOf": [
+							{
+								"$ref": "#/$defs/withEnchantmentsRequired"
+							}
+						],
+						"type": "object",
+						"properties": {
+							"weight": {
+								"type": "integer"
+							}
+						}
+					},
+					"minItems": 1
+				}
+			}
+		},
+		"withEnchantmentChoicesRequired": {
+			"allOf": [
+				{
+					"$ref": "#/$defs/withEnchantmentChoices"
+				},
+				{
+					"required": [
+						"choices"
+					]
+				}
+			]
+		},
+		"withEnchantmentsOrEnchantmentChoices": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/withEnchantments"
+				},
+				{
+					"$ref": "#/$defs/withEnchantmentChoices"
+				}
+			]
+		},
+		"withEnchantmentsOrEnchantmentChoicesRequired": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/withEnchantmentsRequired"
+				},
+				{
+					"$ref": "#/$defs/withEnchantmentChoicesRequired"
+				}
+			]
+		},
+		"attributeModifier": {
+			"required": [
+				"operation",
+				"attribute",
+				"name"
+			],
+			"properties": {
+				"amount": {
+					"type": "integer"
+				},
+				"slot": {
+					"$ref": "#/$defs/equipmentSlotName"
+				},
+				"operation": {
+					"$ref": "#/$defs/attributeModifierOperation"
+				},
+				"attribute": {
+					"$ref": "#/$defs/attributeModifierName"
+				},
+				"name": {
+					"type": "string"
+				}
+			}
+		},
+		"attributeModifierOperation": {
+			"type": "string",
+			"enum": [
+				"ADD_NUMBER",
+				"ADD_SCALAR",
+				"MULTIPLY_SCALAR_1"
+			]
+		},
+		"attributeModifierName": {
+			"type": "string",
+			"enum": [
+				"GENERIC_MAX_HEALTH",
+				"GENERIC_FOLLOW_RANGE",
+				"GENERIC_KNOCKBACK_RESISTANCE",
+				"GENERIC_MOVEMENT_SPEED",
+				"GENERIC_FLYING_SPEED",
+				"GENERIC_ATTACK_DAMAGE",
+				"GENERIC_ATTACK_KNOCKBACK",
+				"GENERIC_ATTACK_SPEED",
+				"GENERIC_ARMOR",
+				"GENERIC_ARMOR_TOUGHNESS",
+				"GENERIC_LUCK",
+				"HORSE_JUMP_STRENGTH",
+				"ZOMBIE_SPAWN_REINFORCEMENTS"
+			]
+		},
+		"materialName": {
+			"type": "string"
+		},
+		"equipmentSlotName": {
+			"type": "string",
+			"enum": [
+				"HAND",
+				"OFF_HAND",
+				"FEET",
+				"LEGS",
+				"CHEST",
+				"HEAD"
+			]
+		},
+		"fireworkColors": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"pattern": "^(?:1?\\d?\\d|2[0-4]\\d|25[0-5])(?:,(?:1?\\d?\\d|2[0-4]\\d|25[0-5])){2}$"
+			},
+			"minItems": 1
+		},
+		"withBossBarName": {
+			"required": [
+				"name"
+			],
+			"properties": {
+				"name": {
+					"type": "string",
+					"minLength": 1
+				}
+			}
+		},
+		"withBossBarData": {
+			"properties": {
+				"title": {
+					"type": "string",
+					"minLength": 1
+				},
+				"fog": {
+					"type": "boolean"
+				},
+				"darken": {
+					"type": "boolean"
+				},
+				"music": {
+					"type": "boolean"
+				},
+				"progress": {
+					"type": "number",
+					"minimum": 0,
+					"maximum": 1
+				},
+				"visible": {
+					"type": "boolean"
+				},
+				"color": {
+					"type": "string",
+					"enum": [
+						"PINK",
+						"BLUE",
+						"RED",
+						"GREEN",
+						"YELLOW",
+						"PURPLE",
+						"WHITE"
+					]
+				},
+				"style": {
+					"type": "string",
+					"enum": [
+						"SOLID",
+						"SEGMENTED_6",
+						"SEGMENTED_10",
+						"SEGMENTED_12",
+						"SEGMENTED_20"
+					]
+				}
+			}
+		},
+		"trigger": {
+			"type": "object",
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": { "$ref": "#/$defs/triggerType" }
+			},
+			"description": "Also known as event.",
+			"comment": "TODO: common trigger settings (location, player selector, etc)",
+			"oneOf": [
+				{
+					"properties": {
+						"type": {
+							"const": "real_timed"
+						},
+						"time": {
+							"type": "string"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "real_periodic"
+						},
+						"period": {
+							"type": "integer"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "server_timed"
+						},
+						"time": {
+							"type": "integer"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "server_periodic"
+						},
+						"period": {
+							"type": "integer"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "player_talk"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "player_join"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "player_quit"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "player_virtual_attack"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "goal_finished"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "virtual_talk"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "virtual_stop_talk"
+						}
+					}
+				},
+				{
+					"properties": {
+						"type": {
+							"const": "animation_change"
+						},
+						"current_animation": {
+							"type": "string"
+						},
+						"next_animation": {
+							"type": "string"
+						}
+					}
+				},
+				{
+					"required": [
+						"process"
+					],
+					"properties": {
+						"type": {
+							"const": "selection"
+						},
+						"period": {
+							"type": "integer"
+						},
+						"select": { "$ref": "#/$defs/selectorMCMEEntity" },
+						"process": {
+							"type": "string",
+							"enum": [
+								"leave",
+								"enter"
+							]
+						}
+					}
+				},
+				{
+					"required": [
+						"name"
+					],
+					"properties": {
+						"type": {
+							"const": "external"
+						},
+						"name": {
+							"type": "string"
+						}
+					}
+				}
+			]
+		},
+		"triggerType": {
+			"type": "string",
+			"enum": [
+				"real_timed",
+				"real_periodic",
+				"server_timed",
+				"server_periodic",
+				"player_talk",
+				"player_join",
+				"player_quit",
+				"player_virtual_attack",
+				"virtual_talk",
+				"virtual_stop_talk",
+				"goal_finished",
+				"animation_change",
+				"selection",
+				"external"
+			]
+		},
+		"withTrigger": {
+			"properties": {
+				"event": {
+					"$ref": "#/$defs/trigger"
+				},
+				"events": {
+					"type": "array",
+					"items": [
+						{ "$ref": "#/$defs/trigger" }
+					]
+				}
+			}
+		},
+		"withTriggerRequired": {
+			"allOf": [
+				{ "$ref": "#/$defs/withTrigger" },
+				{
+					"oneOf": [
+						{
+							"type": "object",
+							"required": [
+								"event"
+							]
+						},
+						{
+							"type": "object",
+							"required": [
+								"events"
+							],
+							"properties": {
+								"events": {
+									"minItems": 1
+								}
+							}
+						}
+					]
+				}
+			]
 		}
 	},
 	"properties": {
@@ -261,6 +2069,15 @@
 			"type": "array",
 			"items": [
 				{ "$ref": "#/$defs/condition" }
+			]
+		},
+		"action": {
+			"$ref": "#/$defs/action"
+		},
+		"actions": {
+			"type": "array",
+			"items": [
+				{ "$ref": "#/$defs/action" }
 			]
 		}
 	}
