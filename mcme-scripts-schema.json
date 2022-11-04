@@ -763,6 +763,16 @@
 											"select"
 										]
 									}
+								},
+								{
+									"required": [
+										"select"
+									],
+									"not": {
+										"required": [
+											"center"
+										]
+									}
 								}
 							]
 						}
@@ -772,7 +782,7 @@
 					],
 					"properties": {
 						"type": {
-							"description": "`select` is ignored if `center` is provided.",
+							"description": "`select` is ignored if `center` is provided and vice versa.",
 							"const": "random_spawn"
 						},
 						"choices": {
