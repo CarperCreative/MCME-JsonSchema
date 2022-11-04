@@ -924,22 +924,16 @@
 				{
 					"allOf": [
 						{
-							"oneOf": [
+							"anyOf": [
 								{
-									"required": "title",
-									"properties": {
-										"title": {
-											"minLength": 1
-										}
-									}
+									"required": [
+										"title"
+									]
 								},
 								{
-									"required": "subtitle",
-									"properties": {
-										"subtitle": {
-											"minLength": 1
-										}
-									}
+									"required": [
+										"subtitle"
+									]
 								}
 							]
 						}
@@ -952,10 +946,12 @@
 							"$ref": "#/$defs/selectorPlayer"
 						},
 						"title": {
-							"type": "string"
+							"type": "string",
+							"minLength": 1
 						},
 						"subtitle": {
-							"type": "string"
+							"type": "string",
+							"minLength": 1
 						},
 						"fade_in": {
 							"type": "integer",
