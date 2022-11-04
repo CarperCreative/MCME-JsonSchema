@@ -442,7 +442,7 @@
 				{
 					"allOf": [
 						{
-							"oneOf": [
+							"anyOf": [
 								{
 									"required": [
 										"potion_effect"
@@ -1377,7 +1377,7 @@
 					"$ref": "#/$defs/withItems"
 				},
 				{
-					"oneOf": [
+					"anyOf": [
 						{
 							"required": [
 								"item"
@@ -1431,7 +1431,7 @@
 			]
 		},
 		"withItemsOrItemChoices": {
-			"oneOf": [
+			"anyOf": [
 				{
 					"$ref": "#/$defs/withItems"
 				},
@@ -1441,7 +1441,7 @@
 			]
 		},
 		"withItemsOrItemChoicesRequired": {
-			"oneOf": [
+			"anyOf": [
 				{
 					"$ref": "#/$defs/withItemsRequired"
 				},
@@ -1595,7 +1595,7 @@
 					"$ref": "#/$defs/withItemFilters"
 				},
 				{
-					"oneOf": [
+					"anyOf": [
 						{
 							"required": [
 								"item_filter"
@@ -1652,7 +1652,7 @@
 					"$ref": "#/$defs/withEnchantments"
 				},
 				{
-					"oneOf": [
+					"anyOf": [
 						{
 							"required": [
 								"enchantment"
@@ -1706,7 +1706,7 @@
 			]
 		},
 		"withEnchantmentsOrEnchantmentChoices": {
-			"oneOf": [
+			"anyOf": [
 				{
 					"$ref": "#/$defs/withEnchantments"
 				},
@@ -1716,7 +1716,7 @@
 			]
 		},
 		"withEnchantmentsOrEnchantmentChoicesRequired": {
-			"oneOf": [
+			"anyOf": [
 				{
 					"$ref": "#/$defs/withEnchantmentsRequired"
 				},
@@ -2040,7 +2040,7 @@
 			"allOf": [
 				{ "$ref": "#/$defs/withTrigger" },
 				{
-					"oneOf": [
+					"anyOf": [
 						{
 							"type": "object",
 							"required": [
