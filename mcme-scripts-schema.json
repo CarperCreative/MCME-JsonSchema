@@ -1,8 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "https://mcmiddleearth.com/schema/scripts",
-	"title": "MCME Script",
-	"type": "object",
 	"$defs": {
 		"condition": {
 			"type": "object",
@@ -206,6 +204,29 @@
 				"player_online",
 				"server_daytime"
 			]
+		},
+		"conditions": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/condition"
+				},
+				{
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/condition"
+					}
+				}
+			]
+		},
+		"withConditions": {
+			"properties": {
+				"condition": {
+					"$ref": "#/$defs/conditions"
+				},
+				"conditions": {
+					"$ref": "#/$defs/conditions"
+				}
+			}
 		},
 		"withMatchAll": {
 			"properties": {
@@ -1142,6 +1163,29 @@
 				"delete_tag"
 			]
 		},
+		"actions": {
+			"oneOf": [
+				{
+					"$ref": "#/$defs/action"
+				},
+				{
+					"type": "array",
+					"items": {
+						"$ref": "#/$defs/action"
+					}
+				}
+			]
+		},
+		"withActions": {
+			"properties": {
+				"action": {
+					"$ref": "#/$defs/actions"
+				},
+				"actions": {
+					"$ref": "#/$defs/actions"
+				}
+			}
+		},
 		"withGoal": {
 			"required": [
 				"goal"
@@ -1855,14 +1899,42 @@
 		},
 		"trigger": {
 			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/$defs/decisionNode"
+				}
+			],
 			"required": [
 				"type"
 			],
 			"properties": {
-				"type": { "$ref": "#/$defs/triggerType" }
+				"type": {
+					"$ref": "#/$defs/triggerType"
+				},
+				"location": {
+					"$ref": "#/$defs/location"
+				},
+				"player": {
+					"allOf": [
+						{
+							"$ref": "#/$defs/selectorPlayer"
+						},
+						{
+							"$ref": "#/$defs/selectorVirtualEntity"
+						}
+					]
+				},
+				"center": {
+					"$ref": "#/$defs/location"
+				},
+				"name": {
+					"type": "string"
+				},
+				"call_once": {
+					"type": "boolean"
+				}
 			},
 			"description": "Also known as event.",
-			"comment": "TODO: common trigger settings (location, player selector, etc)",
 			"oneOf": [
 				{
 					"properties": {
@@ -2059,30 +2131,44 @@
 					]
 				}
 			]
+		},
+		"decisionNode": {
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/$defs/withConditions"
+				},
+				{
+					"$ref": "#/$defs/withActions"
+				}
+			],
+			"properties": {
+				"met_all_conditions": {
+					"type": "boolean"
+				},
+				"then": {
+					"$ref": "#/$defs/decisionNode"
+				},
+				"else": {
+					"$ref": "#/$defs/decisionNode"
+				}
+			}
+		},
+		"rootScript": {
+			"title": "MCME Script",
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/$defs/withTriggerRequired"
+				}
+			],
+			"properties": {
+				"name": {
+					"type": "string",
+					"title": "Script name"
+				}
+			}
 		}
 	},
-	"properties": {
-		"name": {
-			"type": "string",
-			"title": "Script name"
-		},
-		"condition": {
-			"$ref": "#/$defs/condition"
-		},
-		"conditions": {
-			"type": "array",
-			"items": {
-				"$ref": "#/$defs/condition"
-			}
-		},
-		"action": {
-			"$ref": "#/$defs/action"
-		},
-		"actions": {
-			"type": "array",
-			"items": {
-				"$ref": "#/$defs/action"
-			}
-		}
-	}
+	"$ref": "#/$defs/rootScript"
 }
