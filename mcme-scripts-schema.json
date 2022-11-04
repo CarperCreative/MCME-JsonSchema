@@ -1509,11 +1509,9 @@
 					"properties": {
 						"value": {
 							"type": "array",
-							"items": [
-								{
-									"type": "string"
-								}
-							],
+							"items": {
+								"type": "string"
+							},
 							"minItems": 1
 						},
 						"present": {
@@ -2030,9 +2028,9 @@
 				},
 				"events": {
 					"type": "array",
-					"items": [
-						{ "$ref": "#/$defs/trigger" }
-					]
+					"items": {
+						"$ref": "#/$defs/trigger"
+					}
 				}
 			}
 		},
@@ -2073,18 +2071,18 @@
 		},
 		"conditions": {
 			"type": "array",
-			"items": [
-				{ "$ref": "#/$defs/condition" }
-			]
+			"items": {
+				"$ref": "#/$defs/condition"
+			}
 		},
 		"action": {
 			"$ref": "#/$defs/action"
 		},
 		"actions": {
 			"type": "array",
-			"items": [
-				{ "$ref": "#/$defs/action" }
-			]
+			"items": {
+				"$ref": "#/$defs/action"
+			}
 		}
 	}
 }
